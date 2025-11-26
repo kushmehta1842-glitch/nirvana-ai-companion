@@ -8,6 +8,7 @@ const API_URL =
 
 // Ordered list of screen IDs
 const screensOrder = [
+  "access",   // Access code screen first
   "welcome",
   "q1",
   "q2",
@@ -34,6 +35,126 @@ const screensOrder = [
 ];
 
 const TOTAL_QUESTIONS = 20;
+
+// List of valid access codes (you can change/add your real codes here)
+const VALID_CODES = 
+[
+"0007",
+"8016",
+"0102",
+"0324",
+"0342",
+"0380",
+"0519",
+"0728",
+"0882",
+"1010",
+"1115",
+"1166",
+"1182",
+"1354",
+"1380",
+"1432",
+"1496",
+"1573",
+"1661",
+"1780",
+"1835",
+"1852",
+"1902",
+"2047",
+"2141",
+"2179",
+"2245",
+"2321",
+"2388",
+"2413",
+"2536",
+"2567",
+"2734",
+"2833",
+"2859",
+"2891",
+"2962",
+"3077",
+"3155",
+"3221",
+"3273",
+"3286",
+"3414",
+"3457",
+"3564",
+"3655",
+"3720",
+"3834",
+"3867",
+"3912",
+"4089",
+"4179",
+"4238",
+"4374",
+"4431",
+"4581",
+"4627",
+"4730",
+"4892",
+"4923",
+"5072",
+"5183",
+"5274",
+"5370",
+"5421",
+"5488",
+"5569",
+"5632",
+"5741",
+"5893",
+"5906",
+"6042",
+"6129",
+"6275",
+"6381",
+"6419",
+"6520",
+"6680",
+"6749",
+"6885",
+"6973",
+"7031",
+"7146",
+"7214",
+"7332",
+"7449",
+"7593",
+"7651",
+"7784",
+"7892",
+"8035",
+"8179",
+"8294",
+"8427",
+"8590",
+"8673",
+"8785",
+"8892",
+"8994",
+"9128",
+"9234",
+"9346",
+"9455",
+"9550",
+"9584",
+"9675",
+"9791",
+"9929",
+"9963"
+];
+
+// The code the current user entered (once validated)
+let currentAccessCode = null;
+
+// Stored profile for the current access code (if available)
+let currentProfile = null;
 
 // All answers for this user
 let answers = {
@@ -63,12 +184,22 @@ const userNameDisplayEl = document.getElementById("userNameDisplay");
 const companionNameDisplayEl = document.getElementById("companionNameDisplay");
 const companionSubtitleEl = document.getElementById("companionSubtitle");
 
+// Access + Welcome elements
+const accessCodeInput = document.getElementById("accessCodeInput");
+const accessCodeError = document.getElementById("accessCodeError");
+const btnAccessContinue = document.getElementById("btnAccessContinue");
+const btnSkipMain = document.getElementById("btnSkipMain");
+
 // =======================
 // UTILITIES
 // =======================
 
 function generateUserId() {
-  return "nirvana-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  return (
+    "nirvana-" +
+    Math.random().toString(36).slice(2) +
+    Date.now().toString(36)
+  );
 }
 
 function getUserDisplayName() {
@@ -84,9 +215,58 @@ function getCompanionName() {
   return "Nirvana";
 }
 
-// Show a simple alert for now
 function showValidationToast(message) {
   alert(message);
+}
+
+// -----------------------
+// Profile storage helpers
+// -----------------------
+
+function getProfileStorageKey(code) {
+  return "nirvana_user_" + code;
+}
+
+function loadProfileForCode(code) {
+  if (!code) return null;
+  try {
+    const raw = localStorage.getItem(getProfileStorageKey(code));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveProfileForCurrentCode() {
+  if (!currentAccessCode) return;
+
+  const profile = {
+    onboardingDone: true,
+    user_display_name: getUserDisplayName(),
+    companion_name: getCompanionName(),
+  };
+
+  currentProfile = profile;
+
+  try {
+    localStorage.setItem(
+      getProfileStorageKey(currentAccessCode),
+      JSON.stringify(profile)
+    );
+  } catch (e) {
+    console.error("Failed to save profile to localStorage:", e);
+  }
+}
+
+function updateSkipMainVisibility() {
+  if (!btnSkipMain) return;
+
+  if (currentProfile && currentProfile.onboardingDone) {
+    btnSkipMain.style.display = "inline-block";
+  } else {
+    btnSkipMain.style.display = "none";
+  }
 }
 
 // =======================
@@ -121,6 +301,9 @@ function updateProgress(screenId) {
   } else if (screenId === "chat") {
     label = "Chat";
     percent = 100;
+  } else if (screenId === "access") {
+    label = "Access";
+    percent = 0;
   } else {
     label = "Welcome";
     percent = 0;
@@ -141,7 +324,7 @@ function collectCurrentScreenAnswers() {
   const screenId = activeScreen.dataset.screen;
   const form = activeScreen.querySelector(".options-group");
 
-  // Q3 is a text-only screen with its own layout
+  // Q3 is the "What would you like me to call you?" text input
   if (screenId === "q3") {
     const inputEl = document.getElementById("userNameInput");
     const val = inputEl ? inputEl.value.trim() : "";
@@ -154,7 +337,7 @@ function collectCurrentScreenAnswers() {
   }
 
   if (!form) {
-    // welcome / creating / chat screens
+    // access / welcome / creating / chat screens
     return true;
   }
 
@@ -218,6 +401,7 @@ function collectCurrentScreenAnswers() {
 function sendOnboardingToBackend() {
   const payload = {
     userId: answers.userId,
+    accessCode: currentAccessCode || "",
     gender: answers.gender || "",
     age_group: answers.age_group || "",
     user_display_name: answers.user_display_name || "",
@@ -259,8 +443,10 @@ function sendOnboardingToBackend() {
 function logChatToBackend(sender, messageText) {
   const payload = {
     userId: answers.userId,
+    accessCode: currentAccessCode || "",
     sender,
     message: messageText,
+    messageId: "msg-" + Date.now(),
   };
 
   fetch(API_URL, {
@@ -317,7 +503,6 @@ function hideTypingIndicator() {
   }
 }
 
-// Send a companion message with typing delay
 function sendCompanionMessage(text, callback) {
   showTypingIndicator();
   setTimeout(() => {
@@ -329,16 +514,8 @@ function sendCompanionMessage(text, callback) {
 }
 
 // =======================
-// MODES CONFIG (TEXT ONLY)
+// MODES CONFIG
 // =======================
-
-const MODE_LABELS = {
-  calm: "Calm / Neutral",
-  happy: "Happy / Excited",
-  sad: "Sad / Low",
-  stressed: "Stressed / Overwhelmed",
-  angry: "Angry / Irritated",
-};
 
 const MODE_EMPATHY_LINES = {
   calm: [
@@ -410,11 +587,9 @@ function showModeSelection() {
 function handleModeSelect(modeKey, label) {
   currentMode = modeKey || null;
 
-  // Show user choice as a message
   appendMessage("user", label);
   logChatToBackend("user", `[Selected mode: ${label}]`);
 
-  // Companion intro text for this mode
   let intro = "";
   switch (modeKey) {
     case "calm":
@@ -438,7 +613,8 @@ function handleModeSelect(modeKey, label) {
         "I appreciate your honesty. You’re allowed to feel angry or irritated here—I won’t judge you for it.";
       break;
     default:
-      intro = "I’m here with you, whatever this moment looks like. We can take it one piece at a time.";
+      intro =
+        "I’m here with you, whatever this moment looks like. We can take it one piece at a time.";
   }
 
   sendCompanionMessage(intro, () => {
@@ -456,7 +632,6 @@ function showModeMenuForCurrentMode() {
 
   moodOptions.innerHTML = "";
 
-  // Common options across modes
   const baseOptions = [
     {
       id: "write",
@@ -486,12 +661,10 @@ function showModeMenuForCurrentMode() {
 }
 
 function handleModeOptionClick(optionId, label) {
-  // Show user choice
   appendMessage("user", label);
   logChatToBackend("user", `[Selected mode option: ${label}]`);
 
   if (!currentMode) {
-    // If somehow no mode, just show mode selection again
     sendCompanionMessage(
       "Let’s start by choosing how you’re feeling right now.",
       () => {
@@ -514,7 +687,6 @@ function handleModeOptionClick(optionId, label) {
   if (optionId === "question") {
     const q = getGentleQuestionForCurrentMode();
     sendCompanionMessage(q, () => {
-      // After this, user will probably type; we’ll respond with empathy again
       showModeMenuForCurrentMode();
     });
     return;
@@ -557,11 +729,11 @@ function getGentleQuestionForCurrentMode() {
   }
 }
 
-// Handle free-text messages from the user
-function handleUserFreeText(userText) {
+function handleUserFreeText() {
   const line = getEmpathyLineForCurrentMode();
   sendCompanionMessage(
-    line + " You can keep sharing if that feels right, or use the options below whenever you’d like.",
+    line +
+      " You can keep sharing if that feels right, or use the options below whenever you’d like.",
     () => {
       if (currentMode) {
         showModeMenuForCurrentMode();
@@ -581,7 +753,8 @@ function initChatIntro() {
   const companionName = getCompanionName();
 
   if (userNameDisplayEl) userNameDisplayEl.textContent = userName;
-  if (companionNameDisplayEl) companionNameDisplayEl.textContent = companionName;
+  if (companionNameDisplayEl)
+    companionNameDisplayEl.textContent = companionName;
 
   if (companionSubtitleEl) {
     companionSubtitleEl.textContent =
@@ -597,7 +770,6 @@ function initChatIntro() {
 
   currentMode = null;
 
-  // Initial two messages + mode selection
   sendCompanionMessage("I’m really glad you’re here!", () => {
     sendCompanionMessage("Tell me how you’re feeling today?", () => {
       showModeSelection();
@@ -609,7 +781,38 @@ function initChatIntro() {
 // EVENT LISTENERS
 // =======================
 
-// Start button from welcome
+// Access Code "Continue" button
+if (btnAccessContinue) {
+  btnAccessContinue.addEventListener("click", () => {
+    if (!accessCodeInput) return;
+
+    const code = accessCodeInput.value.trim();
+
+    const isValid =
+      code.length === 4 && VALID_CODES.includes(code);
+
+    if (!isValid) {
+      if (accessCodeError) {
+        accessCodeError.style.display = "block";
+      }
+      return;
+    }
+
+    currentAccessCode = code;
+    if (accessCodeError) {
+      accessCodeError.style.display = "none";
+    }
+
+    // Load existing profile for this code (if any)
+    currentProfile = loadProfileForCode(currentAccessCode);
+    updateSkipMainVisibility();
+
+    // Go to Welcome screen
+    showScreenByIndex(screensOrder.indexOf("welcome"));
+  });
+}
+
+// Start button from welcome (go to Q1)
 const btnStart = document.getElementById("btnStart");
 if (btnStart) {
   btnStart.addEventListener("click", () => {
@@ -617,24 +820,45 @@ if (btnStart) {
   });
 }
 
-// Logo click -> reset (go back to welcome)
+// "Skip to MAIN PART" button on Welcome
+if (btnSkipMain) {
+  btnSkipMain.addEventListener("click", () => {
+    if (!currentProfile || !currentProfile.onboardingDone) {
+      return;
+    }
+
+    const storedUserName =
+      (currentProfile.user_display_name || "").trim() || "there";
+    const storedCompanionName =
+      (currentProfile.companion_name || "").trim() || "Nirvana";
+
+    answers.user_display_name = storedUserName;
+    answers.companion_name_pref = {
+      choice: "custom",
+      name: storedCompanionName,
+    };
+
+    showScreenByIndex(screensOrder.indexOf("chat"));
+    initChatIntro();
+  });
+}
+
+// Logo click -> reload / reset
 const logoLink = document.getElementById("logoLink");
 if (logoLink) {
   logoLink.addEventListener("click", (e) => {
     e.preventDefault();
-    // Simplest reliable reset: reload the page
     window.location.reload();
   });
 }
 
-// Handle "I'll choose a name" text input visibility
+// Companion name text input toggle (Q4)
 document.querySelectorAll("[data-toggle-input]").forEach((radio) => {
   radio.addEventListener("change", () => {
     const targetId = radio.dataset.toggleInput;
     const inputEl = document.getElementById(targetId);
     if (!inputEl) return;
 
-    // Hide all text-input wrappers in this screen first
     const screen = radio.closest(".screen");
     if (screen) {
       screen.querySelectorAll(".text-input").forEach((el) => {
@@ -644,7 +868,6 @@ document.querySelectorAll("[data-toggle-input]").forEach((radio) => {
       });
     }
 
-    // Show this one
     inputEl.classList.remove("hidden");
     const innerInput = inputEl.querySelector("input");
     if (innerInput) innerInput.focus();
@@ -660,12 +883,15 @@ document.querySelectorAll(".btn-next").forEach((btn) => {
     const activeScreen = document.querySelector(".screen.active");
     const screenId = activeScreen ? activeScreen.dataset.screen : "";
 
-    // If we just finished Q20, send onboarding and move to "creating"
     if (screenId === "q20") {
       const compName = getCompanionName();
       if (companionNamePreviewEl) {
         companionNamePreviewEl.textContent = compName;
       }
+
+      // Save profile so future visits with same code can skip
+      saveProfileForCurrentCode();
+      updateSkipMainVisibility();
 
       sendOnboardingToBackend();
       showScreenByIndex(screensOrder.indexOf("creating"));
@@ -687,7 +913,7 @@ document.querySelectorAll(".btn-back").forEach((btn) => {
   });
 });
 
-// "Meet My Companion" button
+// "Meet My Companion" from creating screen
 const btnMeetCompanion = document.getElementById("btnMeetCompanion");
 if (btnMeetCompanion) {
   btnMeetCompanion.addEventListener("click", () => {
@@ -707,7 +933,7 @@ if (chatForm) {
     logChatToBackend("user", text);
     chatInput.value = "";
 
-    handleUserFreeText(text);
+    handleUserFreeText();
   });
 }
 
@@ -716,3 +942,4 @@ if (chatForm) {
 // =======================
 
 showScreenByIndex(0);
+console.log("Nirvana script loaded OK");

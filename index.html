@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nirvana – AI Companion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <a href="#" id="logoLink" class="logo-container">
+  <img src="nirvana-logo.png" alt="Nirvana Logo" class="logo-image" />
+</a>
+        <div class="brand-text">
+          <div class="brand-title">NIRVANA</div>
+          <div class="brand-subtitle">AI Companion</div>
+        </div>
+      </div>
+      <div class="header-progress">
+        <div class="progress-label" id="progressLabel">Welcome</div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="app-main">
+      <section class="left-pane">
+        <!-- Welcome Screen -->
+        <div class="screen active" data-screen="welcome">
+          <div class="hero-copy">
+            <h1 class="hero-title">Connecting you to your best self</h1>
+            <p class="hero-subtitle">
+              Take a few moments to create a companion that understands how you think, feel, and grow.
+            </p>
+          </div>
+          <button class="btn primary" id="btnStart">Let’s Go</button>
+        </div>
+
+        <!-- Q1: Gender -->
+        <div class="screen" data-screen="q1">
+          <h2 class="question-title">How do you identify your gender?</h2>
+          <div class="options-group" data-question-key="gender" data-type="single">
+            <label class="option">
+              <input type="radio" name="q1" value="Male" />
+              <span>Male</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q1" value="Female" />
+              <span>Female</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q1" value="Non-binary" />
+              <span>Non-binary</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q1" value="Prefer not to say" />
+              <span>Prefer not to say</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q2: Age group -->
+        <div class="screen" data-screen="q2">
+          <h2 class="question-title">Which age group are you in?</h2>
+          <div class="options-group" data-question-key="age_group" data-type="single">
+            <label class="option">
+              <input type="radio" name="q2" value="Under 18" />
+              <span>Under 18</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q2" value="18–30" />
+              <span>18–30</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q2" value="31–45" />
+              <span>31–45</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q2" value="46+" />
+              <span>46+</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q3: User name (text only) -->
+        <div class="screen" data-screen="q3">
+          <h2 class="question-title">What would you like me to call you?</h2>
+          <div class="options-group" data-question-key="user_display_name" data-type="text">
+            <div class="text-input-wrapper">
+              <input
+                type="text"
+                id="userNameInput"
+                class="text-input"
+                placeholder="Type the name or nickname you prefer"
+                maxlength="50"
+              />
+            </div>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q4: Companion name preference -->
+        <div class="screen" data-screen="q4">
+          <h2 class="question-title">And what name would you like to give your AI Companion?</h2>
+          <div class="options-group" data-question-key="companion_name_pref" data-type="single-with-input">
+            <label class="option">
+              <input
+                type="radio"
+                name="q4"
+                value="custom"
+                data-toggle-input="companionNameInput"
+              />
+              <span>I’ll choose a name</span>
+            </label>
+            <div class="text-input-wrapper text-input hidden" id="companionNameInput">
+              <input
+                type="text"
+                id="companionNameText"
+                placeholder="Type your companion’s name"
+                maxlength="50"
+              />
+            </div>
+            <label class="option">
+              <input type="radio" name="q4" value="generate" />
+              <span>Please generate one for me</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q5: Main reason -->
+        <div class="screen" data-screen="q5">
+          <h2 class="question-title">
+            What brings you here? What’s the main reason you want an AI Companion?
+          </h2>
+          <div class="options-group" data-question-key="companion_reason" data-type="single">
+            <label class="option">
+              <input type="radio" name="q5" value="Someone to talk to" />
+              <span>Someone to talk to</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q5" value="Motivation & guidance" />
+              <span>Motivation & guidance</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q5" value="Productivity help" />
+              <span>Productivity help</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q5" value="Fun & casual chats" />
+              <span>Fun & casual chats</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q5" value="Learning & improvement" />
+              <span>Learning & improvement</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q6: Companion role -->
+        <div class="screen" data-screen="q6">
+          <h2 class="question-title">How would you like your AI Companion to fit into your life?</h2>
+          <div class="options-group" data-question-key="companion_role" data-type="single">
+            <label class="option">
+              <input type="radio" name="q6" value="As a friend" />
+              <span>As a friend</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q6" value="As a mentor" />
+              <span>As a mentor</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q6" value="As an assistant" />
+              <span>As an assistant</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q6" value="As a listener" />
+              <span>As a listener</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q6" value="As a partner-like presence" />
+              <span>As a partner-like presence</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q7: Tone preference -->
+        <div class="screen" data-screen="q7">
+          <h2 class="question-title">What kind of tone feels most comfortable for you?</h2>
+          <div class="options-group" data-question-key="tone_preference" data-type="single">
+            <label class="option">
+              <input type="radio" name="q7" value="Friendly" />
+              <span>Friendly</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q7" value="Calm" />
+              <span>Calm</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q7" value="Playful" />
+              <span>Playful</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q7" value="Direct" />
+              <span>Direct</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q7" value="Warm & caring" />
+              <span>Warm & caring</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q8: Conversation depth -->
+        <div class="screen" data-screen="q8">
+          <h2 class="question-title">How deep do you like your conversations to be?</h2>
+          <div class="options-group" data-question-key="conversation_depth" data-type="single">
+            <label class="option">
+              <input type="radio" name="q8" value="Short & simple" />
+              <span>Short & simple</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q8" value="Balanced" />
+              <span>Balanced</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q8" value="Deep & thoughtful" />
+              <span>Deep & thoughtful</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q9: Emotional comfort -->
+        <div class="screen" data-screen="q9">
+          <h2 class="question-title">How comfortable are you with emotional conversations?</h2>
+          <div class="options-group" data-question-key="emotional_comfort" data-type="single">
+            <label class="option">
+              <input type="radio" name="q9" value="Very comfortable" />
+              <span>Very comfortable</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q9" value="Sometimes" />
+              <span>Sometimes</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q9" value="Only if I start it" />
+              <span>Only if I start it</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q9" value="Not comfortable" />
+              <span>Not comfortable</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q10: Topics to avoid -->
+        <div class="screen" data-screen="q10">
+          <h2 class="question-title">Are there any topics you’d rather your companion avoid?</h2>
+          <div class="options-group" data-question-key="topics_avoid" data-type="single">
+            <label class="option">
+              <input type="radio" name="q10" value="Romance" />
+              <span>Romance</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q10" value="Family issues" />
+              <span>Family issues</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q10" value="Deep emotional topics" />
+              <span>Deep emotional topics</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q10" value="No restrictions" />
+              <span>No restrictions</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q11: Companion personality -->
+        <div class="screen" data-screen="q11">
+          <h2 class="question-title">What kind of personality would you enjoy most in your AI Companion?</h2>
+          <div class="options-group" data-question-key="companion_personality" data-type="single">
+            <label class="option">
+              <input type="radio" name="q11" value="Supportive" />
+              <span>Supportive</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q11" value="Funny" />
+              <span>Funny</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q11" value="Honest" />
+              <span>Honest</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q11" value="Curious" />
+              <span>Curious</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q11" value="Romantic" />
+              <span>Romantic</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q11" value="Wise" />
+              <span>Wise</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q12: Human-likeness -->
+        <div class="screen" data-screen="q12">
+          <h2 class="question-title">How human-like would you like your companion to feel?</h2>
+          <div class="options-group" data-question-key="human_likeness" data-type="single">
+            <label class="option">
+              <input type="radio" name="q12" value="Very human-like" />
+              <span>Very human-like</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q12" value="Somewhat human" />
+              <span>Somewhat human</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q12" value="Clearly AI" />
+              <span>Clearly AI</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q12" value="No preference" />
+              <span>No preference</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q13: Expressiveness -->
+        <div class="screen" data-screen="q13">
+          <h2 class="question-title">How expressive should your companion be when talking with you?</h2>
+          <div class="options-group" data-question-key="expressiveness" data-type="single">
+            <label class="option">
+              <input type="radio" name="q13" value="Very expressive" />
+              <span>Very expressive</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q13" value="Moderately expressive" />
+              <span>Moderately expressive</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q13" value="Simple and straightforward" />
+              <span>Simple and straightforward</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q13" value="Adaptive to context" />
+              <span>Adaptive to context</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q14: Initiative -->
+        <div class="screen" data-screen="q14">
+          <h2 class="question-title">How much initiative would you like your companion to take in conversations?</h2>
+          <div class="options-group" data-question-key="initiative_level" data-type="single">
+            <label class="option">
+              <input type="radio" name="q14" value="A lot" />
+              <span>A lot</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q14" value="Sometimes" />
+              <span>Sometimes</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q14" value="A little" />
+              <span>A little</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q14" value="Only when I start" />
+              <span>Only when I start</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q15: Support type -->
+        <div class="screen" data-screen="q15">
+          <h2 class="question-title">What kind of support do you expect most from your companion?</h2>
+          <div class="options-group" data-question-key="support_type" data-type="single">
+            <label class="option">
+              <input type="radio" name="q15" value="Emotional comfort" />
+              <span>Emotional comfort</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q15" value="Practical advice" />
+              <span>Practical advice</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q15" value="Help with daily organization" />
+              <span>Help with daily organization</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q15" value="Motivation & discipline" />
+              <span>Motivation & discipline</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q15" value="Fun & entertainment" />
+              <span>Fun & entertainment</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q16: Guidance style -->
+        <div class="screen" data-screen="q16">
+          <h2 class="question-title">How would you like your companion to guide you when needed?</h2>
+          <div class="options-group" data-question-key="guidance_style" data-type="single">
+            <label class="option">
+              <input type="radio" name="q16" value="Very gently" />
+              <span>Very gently</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q16" value="Balanced & steady" />
+              <span>Balanced & steady</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q16" value="Strict and disciplined" />
+              <span>Strict and disciplined</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q16" value="Depends on the situation" />
+              <span>Depends on the situation</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q17: Low mood response style -->
+        <div class="screen" data-screen="q17">
+          <h2 class="question-title">How should your companion respond if you’re feeling low?</h2>
+          <div class="options-group" data-question-key="low_mood_response_style" data-type="single">
+            <label class="option">
+              <input type="radio" name="q17" value="Comfort me emotionally" />
+              <span>Comfort me emotionally</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q17" value="Give me practical steps" />
+              <span>Give me practical steps</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q17" value="Distract me with fun" />
+              <span>Distract me with fun</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q17" value="Stay neutral and logical" />
+              <span>Stay neutral and logical</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q18: Personalization level -->
+        <div class="screen" data-screen="q18">
+          <h2 class="question-title">How personalized would you like your companion’s behavior to be?</h2>
+          <div class="options-group" data-question-key="personalization_level" data-type="single">
+            <label class="option">
+              <input type="radio" name="q18" value="Highly personalized" />
+              <span>Highly personalized</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q18" value="Moderately personalized" />
+              <span>Moderately personalized</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q18" value="Lightly personalized" />
+              <span>Lightly personalized</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q18" value="Not personalized" />
+              <span>Not personalized</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q19: Conversation pace -->
+        <div class="screen" data-screen="q19">
+          <h2 class="question-title">What conversation pace do you enjoy the most?</h2>
+          <div class="options-group" data-question-key="conversation_pace" data-type="single">
+            <label class="option">
+              <input type="radio" name="q19" value="Slow and calm" />
+              <span>Slow and calm</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q19" value="Natural and steady" />
+              <span>Natural and steady</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q19" value="Fast and energetic" />
+              <span>Fast and energetic</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Q20: Decisiveness -->
+        <div class="screen" data-screen="q20">
+          <h2 class="question-title">
+            When giving suggestions or ideas, how decisive should your companion be?
+          </h2>
+          <div class="options-group" data-question-key="decisiveness_level" data-type="single">
+            <label class="option">
+              <input type="radio" name="q20" value="Very decisive" />
+              <span>Very decisive</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q20" value="Somewhat decisive" />
+              <span>Somewhat decisive</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q20" value="Neutral" />
+              <span>Neutral</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="q20" value="Only when I ask" />
+              <span>Only when I ask</span>
+            </label>
+          </div>
+          <div class="screen-nav">
+            <button class="btn secondary btn-back">Back</button>
+            <button class="btn primary btn-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Companion Creation Screen -->
+        <div class="screen" data-screen="creating">
+          <h2 class="question-title">Great. Here is your AI Companion <span id="companionNamePreview">Nirvana</span>.</h2>
+          <p class="question-subtitle">
+            We’ve woven your preferences into how they’ll show up for you.
+          </p>
+          <div class="screen-nav center">
+            <button class="btn primary" id="btnMeetCompanion">Meet My Companion</button>
+          </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="screen" data-screen="chat">
+          <div class="chat-header-text">
+            <h2 class="chat-title">
+              Hi there <span id="userNameDisplay">there</span>, I’m
+              <span id="companionNameDisplay">Nirvana</span>!
+            </h2>
+            <p id="companionSubtitle" class="chat-subtitle">
+              Be yourself with me and consider this as your safe space.
+            </p>
+          </div>
+
+          <div class="chat-window" id="chatWindow">
+            <!-- Messages injected by script.js -->
+          </div>
+
+          <div class="mood-options" id="moodOptions">
+            <!-- Mode buttons (Calm / Happy / Sad / Stressed / Angry) injected by script.js -->
+          </div>
+
+          <form class="chat-input-row" id="chatForm">
+            <input
+              type="text"
+              id="chatInput"
+              class="chat-input"
+              placeholder="Type anything you’d like to share..."
+              autocomplete="off"
+            />
+            <button type="submit" class="btn chat-send-btn">Send</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Right Pane (visual / ambient area, can be enhanced later) -->
+      <section class="right-pane">
+        <div class="right-ambient">
+          <!-- You can use this space for gradients, subtle visuals, or future content -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-right">
+        <div class="footer-main">
+          <strong>DEVELOPED WITH LOVE BY KUSH MEHTA (MICA)</strong>
+        </div>
+        <div class="footer-sub">
+          <em>Data &amp; Chats are saved for the Academic Purpose only</em>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

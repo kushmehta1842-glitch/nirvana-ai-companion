@@ -30,16 +30,52 @@
     <!-- Main Layout -->
     <main class="app-main">
       <section class="left-pane">
+<!-- Access Code Screen -->
+<div class="screen active" data-screen="access">
+  <h2 class="question-title">Welcome to Nirvana</h2>
+  <p class="question-subtitle">
+    Please enter your 4-digit access code to continue.
+  </p>
+
+  <div class="options-group">
+    <div class="text-input-wrapper">
+      <input
+        type="text"
+        id="accessCodeInput"
+        class="text-input"
+        maxlength="4"
+        placeholder="Enter your code"
+      />
+    </div>
+    <div id="accessCodeError" style="margin-top:6px; font-size:12px; color:#fca5a5; display:none;">
+      Invalid code. Please check and try again.
+    </div>
+  </div>
+
+  <div class="screen-nav center">
+    <button class="btn primary" id="btnAccessContinue">Continue</button>
+  </div>
+</div>
         <!-- Welcome Screen -->
-        <div class="screen active" data-screen="welcome">
-          <div class="hero-copy">
-            <h1 class="hero-title">Connecting you to your best self</h1>
-            <p class="hero-subtitle">
-              Take a few moments to create a companion that understands how you think, feel, and grow.
-            </p>
-          </div>
-          <button class="btn primary" id="btnStart">Let’s Go</button>
-        </div>
+<div class="screen" data-screen="welcome">
+  <div class="hero-copy">
+    <h1 class="hero-title">Connecting you to your best self</h1>
+    <p class="hero-subtitle">
+      Take a few moments to create a companion that understands how you think, feel, and grow.
+    </p>
+  </div>
+
+  <div class="welcome-buttons">
+    <button class="btn primary" id="btnStart">Let’s Go</button>
+    <button
+      class="btn secondary"
+      id="btnSkipMain"
+      style="margin-left: 8px; display: none;"
+    >
+      Skip to MAIN PART
+    </button>
+  </div>
+</div>
 
         <!-- Q1: Gender -->
         <div class="screen" data-screen="q1">
